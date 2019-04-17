@@ -1,0 +1,17 @@
+package com.metronom.tictactoe2.lang;
+
+public enum MessageKey {
+    INPUT_STREAM_IS_NULL,
+    LOAD_ERROR,
+    INVALID_BOARD_LENGTH,
+    DUPLICATE_SYMBOLS,
+    INVALID_POINT,
+    CELL_ALREADY_FULL,
+    START_BANNER,
+    CONFIGS,
+    ENTER_NEXT_POINT,
+    WRONG_VALUE,
+    PLAYER_INPUT,
+    GAME_STATUS,
+    WINNER
+}

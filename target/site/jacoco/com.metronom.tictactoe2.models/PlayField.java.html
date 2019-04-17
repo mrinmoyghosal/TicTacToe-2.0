@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayField.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TicTacToe2</a> &gt; <a href="index.source.html" class="el_package">com.metronom.tictactoe2.models</a> &gt; <span class="el_source">PlayField.java</span></div><h1>PlayField.java</h1><pre class="source lang-java linenums">package com.metronom.tictactoe2.models;
+
+import com.metronom.tictactoe2.exceptions.InvalidCellException;
+import com.metronom.tictactoe2.ui.ConsoleMessage;
+
+import java.util.Optional;
+
+public class PlayField {
+<span class="fc" id="L9">    private static PlayField instance = new PlayField();</span>
+
+    private Character[][] table;
+    private int freeRoomCount;
+    private int playFieldSize;
+
+    private PlayField() {
+    }
+
+    public static PlayField getInstance() {
+<span class="fc" id="L19">        return instance;</span>
+    }
+
+    /**
+     * Initializes the board by setting the {@code playFieldSize} and instantiating the board {@code table} and setting
+     * the {@code freeRoomCount}.
+     *
+     * @param playFieldSize length of the board
+     */
+    public void init(int playFieldSize) {
+<span class="nc" id="L29">        this.playFieldSize = playFieldSize;</span>
+<span class="nc" id="L30">        this.table = new Character[playFieldSize][playFieldSize];</span>
+<span class="nc" id="L31">        this.freeRoomCount = playFieldSize * playFieldSize;</span>
+<span class="nc" id="L32">    }</span>
+
+    /**
+     * Puts a character in the {@code cell} location of the board.
+     *
+     * @param value      the character to put on board
+     * @param cell location to put the character
+     * @throws InvalidCellException if the {@code cell} is not in the boards length or the cell
+     *                                    is already full.
+     */
+    public void put(final Character value, final Cell cell) throws InvalidCellException {
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (!isInRange(cell.getRow(), cell.getColumn()))</span>
+<span class="nc" id="L44">            throw new InvalidCellException(String.format(ConsoleMessage.INVALID_POINT.getMessageText(), playFieldSize, playFieldSize));</span>
+
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (table[cell.getRow()][cell.getColumn()] != null)</span>
+<span class="nc" id="L47">            throw new InvalidCellException(ConsoleMessage.CELL_ALREADY_FULL.getMessageText());</span>
+
+<span class="nc" id="L49">        table[cell.getRow()][cell.getColumn()] = value;</span>
+<span class="nc" id="L50">        freeRoomCount--;</span>
+<span class="nc" id="L51">    }</span>
+
+    /**
+     * Gives the free room count in the board.
+     *
+     * @return {@code freeRoomCount}
+     */
+    public int getFreeRoomCount() {
+<span class="nc" id="L59">        return freeRoomCount;</span>
+    }
+
+    /**
+     * Gives the board length.
+     *
+     * @return {@code playFieldSize}
+     */
+    public int getPlayFieldLength() {
+<span class="nc" id="L68">        return playFieldSize;</span>
+    }
+
+    /**
+     * Calculates the horizontal score of the given cell. Assume that we have a {@code x}
+     * at the location {@code {0, 0}} and we have another {@code x} at the location {@code {0, 1}}.
+     * In this case, this method will return {@code 2} for both cells.
+     *
+     * @param cell the location of the board that we want to calculate it's horizontal score.
+     * @return score of the given cell.
+     */
+    public int calculateHorizontalScore(final Cell cell) {
+<span class="nc" id="L80">        return calculateScore(cell, 0, -1, 0, 1);</span>
+    }
+
+    /**
+     * Calculates the vertical score of the given cell. Assume that we have a {@code x}
+     * at the location {@code {0, 0}} and we have another {@code x} at the location {@code {1, 0}}.
+     * In this case, this method will return {@code 2} for both cells.
+     *
+     * @param cell the location of the board that we want to calculate it's vertical score.
+     * @return score of the given cell.
+     */
+    public int calculateVerticalScore(final Cell cell) {
+<span class="nc" id="L92">        return calculateScore(cell, -1, 0, 1, 0);</span>
+    }
+
+    /**
+     * Calculates the diagonal1 score of the given cell. Assume that we have a {@code x}
+     * at the location {@code {0, 0}} and we have another {@code x} at the location {@code {1, 1}}.
+     * In this case, this method will return {@code 2} for both cells.
+     *
+     * @param cell the location of the board that we want to calculate it's diagonal1 score.
+     * @return score of the given cell.
+     */
+    public int calculateDiagonal1Score(final Cell cell) {
+<span class="nc" id="L104">        return calculateScore(cell, -1, -1, 1, 1);</span>
+    }
+
+    /**
+     * Calculates the diagonal2 score of the given cell. Assume that we have a {@code x}
+     * at the location {@code {0, 1}} and we have another {@code x} at the location {@code {1, 0}}.
+     * In this case, this method will return {@code 2} for both cells.
+     *
+     * @param cell the location of the board that we want to calculate it's diagonal2 score.
+     * @return score of the given cell.
+     */
+    public int calculateDiagonal2Score(final Cell cell) {
+<span class="nc" id="L116">        return calculateScore(cell, -1, 1, 1, -1);</span>
+    }
+
+    /**
+     * Gives the value of the given cell as an {@code Optional&lt;Character&gt;}.
+     * This method will return {@code Optional.empty} if the location is empty or
+     * if the given cell is not in the range of the board.
+     *
+     * @param row    row number of the board
+     * @param column column number of the board
+     * @return {@code Optional&lt;Character&gt;}
+     */
+    public Optional&lt;Character&gt; getCell(final int row, final int column) {
+<span class="nc bnc" id="L129" title="All 2 branches missed.">        if (isInRange(row, column))</span>
+<span class="nc" id="L130">            return Optional.ofNullable(table[row][column]);</span>
+
+<span class="nc" id="L132">        return Optional.empty();</span>
+    }
+
+    /**
+     * Indicates that, the given cell is inside the board or not.
+     *
+     * @param row    row number
+     * @param column column number
+     * @return {@code true} if the cell is inside the board and otherwise {@code false}
+     */
+    private boolean isInRange(int row, int column) {
+<span class="nc bnc" id="L143" title="All 8 branches missed.">        return row &gt;= 0 &amp;&amp; column &gt;= 0 &amp;&amp; row &lt; playFieldSize &amp;&amp; column &lt; playFieldSize;</span>
+    }
+
+    /**
+     * This is the main method for calculating the score of a cell in any direction.
+     * We can specify the direction using the input parameters.
+     * &lt;br/&gt;&lt;br/&gt;
+     * We have 4 {@code int} parameters that first two parameters specify that when we want to find the start of
+     * the line, in which direction we have to move.
+     * The next two parameters specify that when we want to find
+     * the end of the line, in which direction we have to move.
+     *
+     * @param cell     the base cell which we want to calculate the score based on that
+     * @param startRowInc    the amount of row increment when we want to move toward the start of the line
+     * @param startColumnInc the amount of column increment when we want to move toward the start of the line
+     * @param endRowInc      the amount of row increment when we want to move toward the end of the line
+     * @param endColumnInc   the amount of column increment when we want to move toward the end of the line
+     * @return a number equals or greater than 0 that indicates the score of the given cell
+     * using the given direction.
+     */
+    private int calculateScore(final Cell cell, final int startRowInc, final int startColumnInc, final int endRowInc, final int endColumnInc) {
+<span class="nc" id="L164">        int startRow = cell.getRow();</span>
+<span class="nc" id="L165">        int startColumn = cell.getColumn();</span>
+<span class="nc" id="L166">        int endRow = cell.getRow();</span>
+<span class="nc" id="L167">        int endColumn = cell.getColumn();</span>
+
+<span class="nc" id="L169">        final Optional&lt;Character&gt; cellValue = getCell(cell.getRow(), cell.getColumn());</span>
+
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (cellValue.isPresent()) {</span>
+            // Finding the start of the line
+<span class="nc bnc" id="L173" title="All 2 branches missed.">            while (isInRange(startRow, startColumn)) {</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                if (cellValue.equals(getCell(startRow + startRowInc, startColumn + startColumnInc))) {</span>
+<span class="nc" id="L175">                    startRow += startRowInc;</span>
+<span class="nc" id="L176">                    startColumn += startColumnInc;</span>
+                } else break;
+            }
+
+            // Finding the end of the line
+<span class="nc bnc" id="L181" title="All 2 branches missed.">            while (isInRange(endRow, endColumn)) {</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                if (cellValue.equals(getCell(endRow + endRowInc, endColumn + endColumnInc))) {</span>
+<span class="nc" id="L183">                    endRow += endRowInc;</span>
+<span class="nc" id="L184">                    endColumn += endColumnInc;</span>
+                } else break;
+            }
+
+<span class="nc" id="L188">            return Math.max(endRow - startRow + 1, endColumn - startColumn + 1);</span>
+        }
+
+<span class="nc" id="L191">        return 0;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
