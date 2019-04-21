@@ -2,7 +2,8 @@
 
 import java.util.Optional;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
+import com.metronom.tictactoe2.console.ConsoleHandler;
+import com.metronom.tictactoe2.engine.PlayEngine;
 
 public abstract class Player implements PlayerInterface {
 
@@ -10,25 +11,31 @@ public abstract class Player implements PlayerInterface {
     private char symbol;
     private boolean aiSupport;
     private ConsoleHandler handler;
+    private PlayEngine engine;
 
-<span class="fc" id="L14">    Player(String name, char symbol, boolean aiSupport, ConsoleHandler handler) {</span>
-<span class="fc" id="L15">        this.name = name;</span>
-<span class="fc" id="L16">        this.symbol = symbol;</span>
-<span class="fc" id="L17">        this.aiSupport = aiSupport;</span>
-<span class="fc" id="L18">        this.handler = handler;</span>
-<span class="fc" id="L19">    }</span>
+<span class="fc" id="L16">    Player(String name, char symbol, boolean aiSupport, ConsoleHandler handler, PlayEngine engine) {</span>
+<span class="fc" id="L17">        this.name = name;</span>
+<span class="fc" id="L18">        this.symbol = symbol;</span>
+<span class="fc" id="L19">        this.aiSupport = aiSupport;</span>
+<span class="fc" id="L20">        this.handler = handler;</span>
+<span class="fc" id="L21">        this.engine = engine;</span>
+<span class="fc" id="L22">    }</span>
 
     public String getName() {
-<span class="fc" id="L22">        return name;</span>
+<span class="fc" id="L25">        return name;</span>
     }
 
     public char getSymbol() {
-<span class="fc" id="L26">        return symbol;</span>
+<span class="fc" id="L29">        return symbol;</span>
     }
 
 	public boolean isAiSupport() {
-<span class="fc" id="L30">		return aiSupport;</span>
+<span class="fc" id="L33">		return aiSupport;</span>
 	}
+	
+	public PlayEngine getEngine() {
+<span class="nc" id="L37">        return engine;</span>
+    }
 	
 	
 }

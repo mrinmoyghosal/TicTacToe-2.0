@@ -5,17 +5,14 @@ import com.metronom.tictactoe2.models.PlayField;
 import com.metronom.tictactoe2.models.Cell;
 import com.metronom.tictactoe2.models.Player;
 import com.metronom.tictactoe2.models.PlayerBuilder;
-import com.metronom.tictactoe2.ui.ConsoleHandler;
 import com.metronom.tictactoe2.exceptions.InvalidCellException;
 import com.metronom.tictactoe2.config.Params;
-
+import com.metronom.tictactoe2.console.ConsoleHandler;
 
 import java.util.Optional;
 
 public class PlayEngine {
 	
-    private static final int MAX_WIN_SCORE = 5;
-
     private int turn;
     private int winScore;
 
@@ -33,42 +30,45 @@ public class PlayEngine {
      */
     public PlayEngine(final Params params) {
         this.params = params;
-        this.winScore = Math.min(params.getPlayFieldSize(), MAX_WIN_SCORE);
+        this.winScore = params.getPlayFieldSize();
 
         field.init(params.getPlayFieldSize());
+        field.populateWinningPatterns();
 
-        PlayerBuilder builder = new PlayerBuilder();
 
         this.players = new Player[3];
         
-        this.players[0] = builder
-        		.withName("Player1")
-        		.withSymbol(params.getPlayerOneSymbol())
-        		.withConsoleHandler(handler)
-        		.build();
-        
-        this.players[1] = builder
-        		.withName("Player2")
-        		.withSymbol(params.getPlayerTwoSymbol())
-        		.withConsoleHandler(handler)
-        		.build();
-        
-        this.players[2] = builder
-        		.withName("AI")
+        this.players[0] = new PlayerBuilder()
+        		.withName("AI Player")
         		.withSymbol(params.getAIPlayerSymbol())
         		.withAISupport()
         		.withConsoleHandler(handler)
+        		.withEngineContext(this)
         		.build();
-
+        
+        this.players[1] = new PlayerBuilder()
+        		.withName("Player1")
+        		.withSymbol(params.getPlayerOneSymbol())
+        		.withConsoleHandler(handler)
+        		.withEngineContext(this)
+        		.build();
+        
+        this.players[2] = new PlayerBuilder()
+        		.withName("Player2")
+        		.withSymbol(params.getPlayerTwoSymbol())
+        		.withConsoleHandler(handler)
+        		.withEngineContext(this)
+        		.build();
+        
         this.turn = 0;
         this.status = PlayRuntimeStatus.ON;
     }
 
     /**\
-     * Gives the status of the game. The status type is {@link GameStatus}.
+     * Gives the status of the game. The status type is {@link PlayRuntimeStatus}.
      *
-     * @return {@link GameStatus} that indicates the final status of the game at the time.
-     * This can be {@code GameStatus.RUNNING} or {@code GameStatus.GAME_OVER}
+     * @return {@link PlayRuntimeStatus} that indicates the final status of the game at the time.
+     * This can be {@code PlayRuntimeStatus.ON} or {@code PlayRuntimeStatus.OVER}
      */
     public PlayRuntimeStatus getStatus() {
         return status;
@@ -81,6 +81,13 @@ public class PlayEngine {
      */
     public Player getNextPlayer() {
         return players[turn];
+    }
+    
+    /**
+     * @return List of {@link Player}s
+     */
+    public Player[] getPlayers(){
+    	return players;
     }
 
     /**
@@ -95,7 +102,7 @@ public class PlayEngine {
     /**
      * Gives the game field.
      *
-     * @return instance of {@link Board}
+     * @return instance of {@link PlayField}
      */
     public PlayField getPlayField() {
         return field;
@@ -110,17 +117,6 @@ public class PlayEngine {
         return Optional.ofNullable(winner);
     }
 
-    /**
-     * Gives the score a player needs for winning.
-     * This is the value of {@code Math.min(config.getBoardLength(), MAX_WIN_SCORE)}
-     * <br/><br/>
-     * A player is the winner if he/she/it has a line on the field with the {@code length = winScore}
-     *
-     * @return The score a player needs for winning.
-     */
-    public int getWinScore() {
-        return winScore;
-    }
 
     /**
      * This is the method that controls the game.<br/>
@@ -134,7 +130,6 @@ public class PlayEngine {
     public void performAction(final Cell cell) throws InvalidCellException {
         Player player = players[turn];
         field.put(player.getSymbol(), cell);
-
         turn++;
 
         if (turn == players.length)

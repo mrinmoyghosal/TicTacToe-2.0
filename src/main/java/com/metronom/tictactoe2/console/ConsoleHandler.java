@@ -1,12 +1,13 @@
-package com.metronom.tictactoe2.ui;
+package com.metronom.tictactoe2.console;
 
 import com.metronom.tictactoe2.config.Params;
+import com.metronom.tictactoe2.console.ConsoleMessage;
 import com.metronom.tictactoe2.engine.PlayEngine;
 import com.metronom.tictactoe2.models.PlayRuntimeStatus;
 import com.metronom.tictactoe2.models.Cell;
+import com.metronom.tictactoe2.models.PlayField;
 import com.metronom.tictactoe2.models.Player;
 import com.metronom.tictactoe2.exceptions.InvalidCellException;
-import com.metronom.tictactoe2.ui.ConsoleMessage;
 
 import java.io.PrintStream;
 import java.io.Reader;
@@ -27,7 +28,7 @@ public class ConsoleHandler {
     private PrintStream errorsOutput;
     private Set<Character> symbols = new HashSet<>();
 	private PlayEngine playEngine;
-    
+	
     ConsoleHandler() {
     }
 
@@ -50,20 +51,17 @@ public class ConsoleHandler {
      * Starts the main loop for users interaction.
      * <br/><br/>
      * This method starts the playEngine and inside a loop, takes the users input and
-     * puts them inside the board using the {@link Game}'s {@code performAction} method.
+     * puts them inside the board using the {@link PlayEngine}'s {@code performAction} method.
      * After that, last move's data will be shown and the playEngine status will be shown.
      * <br/><br/>
      * This loop runs while the playEngine status is {@code PlayRuntimeStatus.ON}
      */
     public void startGame() {
-        showStatus();
-
         while (playEngine.getStatus() == PlayRuntimeStatus.ON) {
             Player player = playEngine.getNextPlayer();
 
             try {
                 Cell cell = player.getNextMove(playEngine.getPlayField()).orElseGet(() -> readPlayerMoves(player));
-
                 playEngine.performAction(cell);
                 showMessage(String.format(ConsoleMessage.PLAYER_INPUT.getMessageText(), player.getName(), cell.getRow() + 1, cell.getColumn() + 1));
                 showStatus();
@@ -107,21 +105,6 @@ public class ConsoleHandler {
     }
 
     /**
-     * Shows the running playEngine configs to user
-     */
-    private void showConfigs() {
-        Params config = playEngine.getParams();
-        String msg = String.format(
-        		ConsoleMessage.CONFIGS.getMessageText(), 
-        		config.getPlayFieldSize(),
-        		config.getPlayerOneSymbol(), 
-        		config.getPlayerTwoSymbol(), 
-        		config.getAIPlayerSymbol()
-        		);
-        showMessage(msg);
-    }
-
-    /**
      * Shows the playEngine status and the whole board to user
      */
     private void showStatus() {
@@ -136,10 +119,14 @@ public class ConsoleHandler {
                 else if (column == -1 && row > -1)
                     sb.append(" "+ (row + 1)+ " ");
                 else sb.append(" "+playEngine.getPlayField().getCell(row, column).orElse(' ')+" ");
-
                 sb.append(" | ");
+                
             }
-
+            sb.append("\n");
+            
+            for (int i = 0; i < playEngine.getPlayField().getPlayFieldLength(); i++) {
+            	sb.append("-------");
+            }
             sb.append("\n");
         }
         showMessage(sb.toString());

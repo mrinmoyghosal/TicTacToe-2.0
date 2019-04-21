@@ -3,14 +3,14 @@ package com.metronom.tictactoe2;
 
 import com.metronom.tictactoe2.config.Params;
 import com.metronom.tictactoe2.config.ParamsBuilder;
+import com.metronom.tictactoe2.console.ConsoleHandler;
 import com.metronom.tictactoe2.engine.PlayEngine;
-import com.metronom.tictactoe2.exceptions.ConfigNotFoundException;
-import com.metronom.tictactoe2.ui.ConsoleHandler;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.math.BigInteger;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;

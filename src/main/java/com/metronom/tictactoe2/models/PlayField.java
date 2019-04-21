@@ -1,36 +1,88 @@
 package com.metronom.tictactoe2.models;
 
+import com.metronom.tictactoe2.console.ConsoleMessage;
 import com.metronom.tictactoe2.exceptions.InvalidCellException;
-import com.metronom.tictactoe2.ui.ConsoleMessage;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PlayField {
-    private static PlayField instance = new PlayField();
+    
+
+	private static PlayField instance = new PlayField();
 
     private Character[][] table;
     private int freeRoomCount;
     private int playFieldSize;
-
+    private List<BigInteger> winningPatterns;
+    
+    // Block Initialization
     private PlayField() {
     }
-
+    
+    
+    /*
+     * GETTER AND SETTERS
+     * 
+     */
+    
     public static PlayField getInstance() {
         return instance;
     }
-
+    
+    public Character[][] getTable() {
+		return table;
+	}
+    
+    private void setWinningPatterns(List<BigInteger> pat) {
+		this.winningPatterns = pat;
+		
+	}
+    
+    public List<BigInteger> getWinningPatterns() {
+		return winningPatterns;
+	}
+    
     /**
-     * Initializes the board by setting the {@code playFieldSize} and instantiating the board {@code table} and setting
-     * the {@code freeRoomCount}.
+     * Gives the free room count in the board.
      *
-     * @param playFieldSize length of the board
+     * @return {@code freeRoomCount}
      */
-    public void init(int playFieldSize) {
-        this.playFieldSize = playFieldSize;
-        this.table = new Character[playFieldSize][playFieldSize];
-        this.freeRoomCount = playFieldSize * playFieldSize;
+    public int getFreeRoomCount() {
+        return freeRoomCount;
     }
 
+    /**
+     * Gives the board length.
+     *
+     * @return {@code playFieldSize}
+     */
+    public int getPlayFieldLength() {
+        return playFieldSize;
+    }
+    
+    List<List<Integer>> getBlankTable(){
+    	List<List<Integer>> pat =  new ArrayList<>();
+    	for(int i=0; i < playFieldSize;i++) {
+    		List<Integer> rowlist = new ArrayList<>();
+    		for(int j=0;j<playFieldSize;j++) {
+    			rowlist.add(0);
+    		}
+    		pat.add(rowlist);
+    	}
+    	return pat; 
+    }
+    
     /**
      * Puts a character in the {@code cell} location of the board.
      *
@@ -50,23 +102,237 @@ public class PlayField {
         freeRoomCount--;
     }
 
+    
     /**
-     * Gives the free room count in the board.
+     * Initializes the board by setting the {@code playFieldSize} and instantiating the board {@code table} and setting
+     * the {@code freeRoomCount}.
      *
-     * @return {@code freeRoomCount}
+     * @param playFieldSize length of the board
      */
-    public int getFreeRoomCount() {
-        return freeRoomCount;
+    public void init(int playFieldSize) {
+        this.playFieldSize = playFieldSize;
+        this.table = new Character[playFieldSize][playFieldSize];
+        this.freeRoomCount = playFieldSize * playFieldSize;
     }
-
+    
+    /*
+     * Creates all possible winning patterns in binary 1,0 -
+     * 
+     * | x | x | x |
+     * |   |   |   |  => one example of winning pattern (111000000)
+     * |   |   |   |
+     * 
+     * | x |   |   |
+     * | x |   |   |  => one example of winning pattern (100100100)
+     * | x |   |   |
+     * 
+     * 
+     */
+    public void populateWinningPatterns() {
+    	
+    	List<String> patterns = new ArrayList<String>();
+    	
+    	//populate row patterns
+    	for(int i=0; i < playFieldSize;i++) {
+    		List<List<Integer>> table = getBlankTable();
+    		for(int j=0;j<playFieldSize;j++) {
+    			table.get(i).set(j, 1);
+    		}
+    		String pattern = table.stream().flatMap(Collection::stream).map(n -> n.toString()).collect(Collectors.joining(""));
+    		patterns.add(pattern);
+    	}
+    	
+    	//populate column patterns
+    	for(int i=0; i < playFieldSize;i++) {
+    		List<List<Integer>> table = getBlankTable();
+    		for(int j=0;j<playFieldSize;j++) {
+    			table.get(j).set(i, 1);
+    		}
+    		String pattern = table.stream().flatMap(Collection::stream).map(n -> n.toString()).collect(Collectors.joining(""));
+    		patterns.add(pattern);		
+    	}
+    	
+    	//populate diagonal pattern
+    	List<List<Integer>> diagonalTable = getBlankTable();
+    	List<List<Integer>> diagonalAlternateTable = getBlankTable();
+    	for(int j=0; j< playFieldSize; j++) {
+    		diagonalTable.get(j).set(j,1);
+    		diagonalAlternateTable.get(j).set((playFieldSize-1)-j,1);
+    	}
+    	String diagonalPattern = diagonalTable.stream().flatMap(Collection::stream).map(n -> n.toString()).collect(Collectors.joining(""));
+    	String alternatediagonalPattern = diagonalAlternateTable.stream().flatMap(Collection::stream).map(n -> n.toString()).collect(Collectors.joining(""));
+    	patterns.add(diagonalPattern);
+    	patterns.add(alternatediagonalPattern);
+    	
+    	List<BigInteger> pat = patterns.stream().map(n -> new BigInteger(n,2)).collect(Collectors.toList());
+		  		
+    	this.setWinningPatterns(pat);
+    	
+    }
+    
+    
     /**
-     * Gives the board length.
-     *
-     * @return {@code playFieldSize}
+     * Return heuristic score for each row columns and diagonal
+     * @param table
+     * @param mySymbol
+     * @return {@link int} score
      */
-    public int getPlayFieldLength() {
-        return playFieldSize;
-    }
+    public int evaluate(Character[][] table, char mySymbol) {
+        int rowScore = 0;
+        
+        //evaluate row scores
+        for(int i=0; i < playFieldSize;i++) {
+        	boolean first = true;
+    		for(int j=0;j<playFieldSize;j++) {
+    			if(first) {
+    				if(table[i][j]!=null) {
+					if(table[i][j] == mySymbol) {
+						rowScore = 1;
+					}else {
+						rowScore = -1;
+					}
+    				first = false;
+    				}
+    			}else {
+    				if(table[i][j]!=null) {
+    					
+    				if(table[i][j] == mySymbol) {
+    					if(rowScore >= 1) {
+    						rowScore *= 10;
+    					}else if(rowScore < 0) {
+    						rowScore = 0;
+    					}else {
+    						rowScore = 1;
+    					}
+    				}else {
+    					if(rowScore < 0) {
+    						rowScore *= 10;
+    					}else if(rowScore > 1) {
+    						rowScore = 0;
+    					}else {
+    						rowScore = -1;
+    					}
+    				}
+    				}
+    			}
+    		}
+  
+    	}
+        
+        //evaluate column scores
+        int colScore = 0;
+        for(int i=0; i < playFieldSize;i++) {
+        	boolean first =true;
+    		for(int j=0;j<playFieldSize;j++) {
+    			if(first) {
+    				if(table[j][i]==null) {
+    					colScore = -1;
+    				}
+    				else if(table[j][i] == mySymbol) {
+    					colScore = 1;
+    				}
+    				first = false;
+    			}else {
+    				if(table[j][i]==null) {
+    					colScore = -1;
+    				}
+    				else if(table[j][i] == mySymbol) {
+    					if(colScore > 0) {
+    						colScore *= 10;
+    					}else if(colScore < 0) {
+    						colScore = 0;
+    					}else {
+    						colScore = 1;
+    					}
+    				}else if(table[j][i] != null) {
+    					if(colScore < 0) {
+    						colScore *= 10;
+    					}else if(colScore > 1) {
+    						colScore = 0;
+    					}else {
+    						colScore = -1;
+    					}
+    				}
+    			}
+    		}
+  
+    	}
+        
+        int diagonalScore = 0;
+        int alternateDiagonalScore = 0;
+        boolean diagonalFirst =true;
+    	for(int j=0; j< playFieldSize; j++) {
+    		if(diagonalFirst) {
+				if(table[j][j]==null) {
+					diagonalScore = -1;
+				}
+				else if(table[j][j] == mySymbol) {
+					diagonalScore = 1;
+				}
+				diagonalFirst = false;
+			}else {
+				if(table[j][j]==null) {
+					diagonalScore = -1;
+				}
+				else if(table[j][j] == mySymbol) {
+					if(diagonalScore > 0) {
+						diagonalScore *= 10;
+					}else if(diagonalScore < 0) {
+						diagonalScore = 0;
+					}else {
+						diagonalScore = 1;
+					}
+				}else if(table[j][j] != null) {
+					if(diagonalScore < 0) {
+						diagonalScore *= 10;
+					}else if(diagonalScore > 1) {
+						diagonalScore = 0;
+					}else {
+						diagonalScore = -1;
+					}
+				}
+			}
+    		
+    		
+    	}
+    	boolean alternateDiagonalFirst =true;
+    	for(int j=0; j< playFieldSize; j++) {
+    		if(alternateDiagonalFirst) {
+				if(table[j][(playFieldSize-1)-j]==null) {
+					alternateDiagonalScore = -1;
+				}
+				else if(table[j][(playFieldSize-1)-j] == mySymbol) {
+					alternateDiagonalScore = 1;
+				}
+				alternateDiagonalFirst = false;
+			}else {
+				if(table[j][(playFieldSize-1)-j]==null) {
+					alternateDiagonalScore = -1;
+				}
+				else if(table[j][(playFieldSize-1)-j] == mySymbol) {
+					if(alternateDiagonalScore > 0) {
+						alternateDiagonalScore *= 10;
+					}else if(alternateDiagonalScore < 0) {
+						alternateDiagonalScore = 0;
+					}else {
+						alternateDiagonalScore = 1;
+					}
+				}else if(table[j][(playFieldSize-1)-j] != null) {
+					if(alternateDiagonalScore < 0) {
+						alternateDiagonalScore *= 10;
+					}else if(alternateDiagonalScore > 1) {
+						alternateDiagonalScore = 0;
+					}else {
+						alternateDiagonalScore = -1;
+					}
+				}
+			}
+    		
+    	}
+    	
+    	int finalScore = rowScore + colScore + diagonalScore + alternateDiagonalScore;
+        return finalScore;
+     }
 
     /**
      * Calculates the horizontal score of the given cell. Assume that we have a {@code x}
@@ -190,5 +456,7 @@ public class PlayField {
 
         return 0;
     }
+    
+
 }
 

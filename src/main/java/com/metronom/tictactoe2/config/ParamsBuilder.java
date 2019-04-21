@@ -1,6 +1,6 @@
 package com.metronom.tictactoe2.config;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
+import com.metronom.tictactoe2.console.ConsoleHandler;
 
 enum PlayerName{
 	PLAYER_1("Player 1"),

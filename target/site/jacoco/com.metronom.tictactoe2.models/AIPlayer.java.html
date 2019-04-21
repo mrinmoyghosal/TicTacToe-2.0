@@ -1,30 +1,181 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AIPlayer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TicTacToe2</a> &gt; <a href="index.source.html" class="el_package">com.metronom.tictactoe2.models</a> &gt; <span class="el_source">AIPlayer.java</span></div><h1>AIPlayer.java</h1><pre class="source lang-java linenums">package com.metronom.tictactoe2.models;
 
-import java.util.Optional;
+import java.math.BigInteger;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
+import com.metronom.tictactoe2.config.Params;
+import com.metronom.tictactoe2.console.ConsoleHandler;
+import com.metronom.tictactoe2.engine.PlayEngine;
 
+/** AIPlayer using Minimax algorithm */
 public class AIPlayer extends Player {
-	
-	AIPlayer(String name, char symbol, boolean aiSupport, ConsoleHandler handler) {
-<span class="fc" id="L10">		super(name, symbol, aiSupport, handler);</span>
-<span class="fc" id="L11">	}</span>
-
-	@Override
-	public Optional&lt;Cell&gt; getNextMove(final PlayField field) {
-	        
-<span class="nc" id="L16">        int length = field.getPlayFieldLength();</span>
-
-<span class="nc bnc" id="L18" title="All 2 branches missed.">        for (int row = 0; row &lt; length; row++) {</span>
-<span class="nc bnc" id="L19" title="All 2 branches missed.">            for (int column = 0; column &lt; length; column++) {</span>
-<span class="nc bnc" id="L20" title="All 2 branches missed.">                if (!field.getCell(row, column).isPresent())</span>
-<span class="nc" id="L21">                    return Optional.of(new Cell(row, column));</span>
-            }
-        }
+ 
+<span class="fc" id="L16">   private PlayField field = PlayField.getInstance();</span>
+<span class="fc" id="L17">   private boolean firstMove = true;</span>
    
-<span class="nc" id="L25">        return Optional.empty();</span>
+   
+   AIPlayer(String name, char symbol, boolean aiSupport, ConsoleHandler handler, PlayEngine engine) {
+<span class="fc" id="L21">		super(name, symbol, aiSupport, handler, engine);</span>
+<span class="fc" id="L22">	}</span>
+   
+   public Map&lt;Player, Integer&gt; getCurrentScore(final PlayField field){
+<span class="nc" id="L25">		int length = field.getPlayFieldLength();</span>
+<span class="nc" id="L26">       PlayEngine engine = getEngine();</span>
+<span class="nc" id="L27">       Params params = engine.getParams();</span>
+<span class="nc" id="L28">       Map&lt;Player, Integer&gt; scores = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L29" title="All 2 branches missed.">		for(Player player: engine.getPlayers()) {</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">			if(player != this) {</span>
+<span class="nc" id="L31">			char symbol = player.getSymbol();</span>
+<span class="nc bnc" id="L32" title="All 2 branches missed.">			for(int row = 0; row &lt; length; row++) {</span>
+<span class="nc bnc" id="L33" title="All 2 branches missed.">	            for(int column = 0; column &lt; length; column++) {</span>
+<span class="nc" id="L34">	            	Cell cell = new Cell(row, column);</span>
+<span class="nc" id="L35">	            	Optional&lt;Character&gt; cellValue = field.getCell(row, column);</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">	                if(cellValue.isPresent()) {</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">	                	if(cellValue.get().equals(player.getSymbol())) {</span>
+<span class="nc" id="L38">	                		int totalScore = field.calculateHorizontalScore(cell) +</span>
+<span class="nc" id="L39">	                				field.calculateVerticalScore(cell) +</span>
+<span class="nc" id="L40">	                				field.calculateDiagonal1Score(cell) +</span>
+<span class="nc" id="L41">	                				field.calculateDiagonal2Score(cell);</span>
+<span class="nc" id="L42">	                		scores.put(player, totalScore);</span>
+<span class="nc" id="L43">	                		break;</span>
+	                	}
+	                }
+	            }
+	        }
+			}
+		}
+<span class="nc" id="L50">		return scores;</span>
 	}
 
-
+   int[] move(Player opponent) {
+<span class="nc" id="L54">	  Character[][] table = field.getTable().clone();</span>
+<span class="nc" id="L55">      int[] result = minimax(2, this, opponent, table); // depth, max turn</span>
+<span class="nc" id="L56">      return new int[] {result[1], result[2]};   // row, col</span>
+   }
+ 
+   /** Recursive minimax at level of depth for either maximizing or minimizing player.
+       Return int[3] of {score, row, col}  */
+   private int[] minimax(int depth, Player player1, Player player2, Character[][] table) {
+      // Generate possible next moves in a List of int[2] of {row, col}.
+<span class="nc" id="L63">      List&lt;int[]&gt; nextMoves = generateMoves(table, player1);</span>
+      
+ 
+      // mySeed is maximizing; while oppSeed is minimizing
+<span class="nc bnc" id="L67" title="All 2 branches missed.">      int bestScore = (player1.getSymbol() == getSymbol()) ? Integer.MIN_VALUE : Integer.MAX_VALUE;</span>
+      int currentScore;
+<span class="nc" id="L69">      int bestRow = -1;</span>
+<span class="nc" id="L70">      int bestCol = -1;</span>
+ 
+      //if (nextMoves.isEmpty() || depth == 0) {
+<span class="nc bnc" id="L73" title="All 4 branches missed.">      if (nextMoves.isEmpty() || depth== 0) {</span>
+         // Gameover or depth reached, evaluate score
+<span class="nc" id="L75">         bestScore = field.evaluate(table, player1.getSymbol());</span>
+      } else {
+<span class="nc bnc" id="L77" title="All 2 branches missed.">         for (int[] move : nextMoves) {</span>
+            // Try this move for the current &quot;player&quot;
+<span class="nc" id="L79">            table[move[0]][move[1]] = player1.getSymbol();</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">            if (player1.getSymbol() == getSymbol()) {  // mySeed (computer) is maximizing player</span>
+<span class="nc" id="L81">               currentScore = minimax(depth - 1, player2, player1, table)[0];</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">               if (currentScore &gt; bestScore) {</span>
+<span class="nc" id="L83">                  bestScore = currentScore;</span>
+<span class="nc" id="L84">                  bestRow = move[0];</span>
+<span class="nc" id="L85">                  bestCol = move[1];</span>
+               }
+            } else {  // oppSeed is minimizing player
+<span class="nc" id="L88">               currentScore = minimax(depth - 1, player2, player1,  table)[0];</span>
+<span class="nc bnc" id="L89" title="All 2 branches missed.">               if (currentScore &lt; bestScore) {</span>
+<span class="nc" id="L90">                  bestScore = currentScore;</span>
+<span class="nc" id="L91">                  bestRow = move[0];</span>
+<span class="nc" id="L92">                  bestCol = move[1];</span>
+               }
+            }
+            // Undo move
+<span class="nc" id="L96">            table[move[0]][move[1]] = null;</span>
+<span class="nc" id="L97">         }</span>
+      }
+<span class="nc" id="L99">      return new int[] {bestScore, bestRow, bestCol};</span>
+   }
+ 
+   /** Find all valid next moves.
+       Return List of moves in int[2] of {row, col} or empty list if gameover */
+   private List&lt;int[]&gt; generateMoves(Character[][] field, Player player) {
+<span class="nc" id="L105">      List&lt;int[]&gt; nextMoves = new ArrayList&lt;int[]&gt;(); // allocate List</span>
+            
+      // If gameover, i.e., no next move
+<span class="nc bnc" id="L108" title="All 4 branches missed.">      if (hasWon(this, field) || hasWon(player, field)) {</span>
+<span class="nc" id="L109">         return nextMoves;   // return empty list</span>
+      }
+ 
+      // Search for empty cells and add to the List
+<span class="nc bnc" id="L113" title="All 2 branches missed.">      for (int row = 0; row &lt; this.getEngine().getParams().getPlayFieldSize(); row++) {</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">         for (int col = 0; col &lt; this.getEngine().getParams().getPlayFieldSize(); col++) {</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">             if(field[row][col] == null) {</span>
+<span class="nc" id="L116">            	 nextMoves.add(new int[] {row, col});</span>
+             }
+         }
+      }
+<span class="nc" id="L120">      return nextMoves;</span>
+   }
+ 
+ 
+   /** Returns true if thePlayer wins */
+   private boolean hasWon(Player thePlayer, Character[][] table) {
+<span class="nc" id="L126">	  int playfieldLength = field.getPlayFieldLength();</span>
+<span class="nc" id="L127">	  List&lt;List&lt;Integer&gt;&gt; blankTable = field.getBlankTable();</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">	  for(int i=0; i&lt; table.length; i++) {</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">		  for(int j=0; j&lt; playfieldLength; j++) {</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">			  if(table[i][j] != null) {</span>
+<span class="nc bnc" id="L131" title="All 2 branches missed.">				  if(table[i][j] == thePlayer.getSymbol()) {</span>
+<span class="nc" id="L132">					  blankTable.get(i).set(j, 1);</span>
+				  }
+			  }
+		  }
+	  }
+<span class="nc" id="L137">	  String pattern= blankTable.stream().flatMap(Collection::stream).map(n -&gt; n.toString()).collect(Collectors.joining(&quot;&quot;));</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">	  if(field.getWinningPatterns().contains(new BigInteger(pattern, 2))){</span>
+<span class="nc" id="L139">		  return true;</span>
+	  }
+<span class="nc" id="L141">      return false;</span>
+   }
+   
+   
+   @Override
+	public Optional&lt;Cell&gt; getNextMove(final PlayField field) {
+		
+		// Get Player with Highest Score
+		
+<span class="fc" id="L150">	   List&lt;int[]&gt; moves = new ArrayList&lt;int[]&gt;();</span>
+<span class="fc" id="L151">	   Random rand = new Random();</span>
+	   
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">	   if(firstMove) {</span>
+		   // Move any corner or the middle position
+<span class="fc" id="L155">		   firstMove = false;</span>
+<span class="fc" id="L156">		   return Optional.ofNullable(new Cell(rand.nextInt(field.getPlayFieldLength()-1), rand.nextInt(field.getPlayFieldLength()-1)));</span>
+	   }
+	   
+<span class="nc bnc" id="L159" title="All 2 branches missed.">	   for(Player player: getEngine().getPlayers()) {</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">		   if(player.getSymbol() != getSymbol()) {</span>
+<span class="nc" id="L161">			  int[] move = move(player);</span>
+<span class="nc" id="L162">			  moves.add(move);</span>
+		   }
+	   }
+	   
+<span class="nc" id="L166">	   int[] randomElement = moves.get(rand.nextInt(moves.size()));</span>
+<span class="nc" id="L167">       return Optional.ofNullable(new Cell(randomElement[0], randomElement[1]));</span>
+//	   Map&lt;Player, Integer&gt; curScore = getCurrentScore(field);
+//		Stream&lt;Entry&lt;Player, Integer&gt;&gt; sorted = curScore.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue()));
+//		Optional&lt;Entry&lt;Player, Integer&gt;&gt; entry = sorted.findFirst();
+//		
+//		if(entry.isPresent()) {
+//			Player targetPlayer = entry.get().getKey();
+//			int[] move = move(targetPlayer);
+//			return Optional.ofNullable(new Cell(move[0], move[1]));
+//		}
+//		
+//		return Optional.empty();
+	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

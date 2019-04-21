@@ -8,15 +8,17 @@ import java.util.Optional;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
+import com.metronom.tictactoe2.console.ConsoleHandler;
+import com.metronom.tictactoe2.engine.PlayEngine;
 
 public class TestHumanPlayer {
 	
 	private static HumanPlayer player;
+	private static PlayEngine engine;
 	
 	@BeforeClass
 	public static void initPlayer() {
-		player = new HumanPlayer("X", 'Y', false, ConsoleHandler.getInstance());
+		player = new HumanPlayer("X", 'Y', false, ConsoleHandler.getInstance(), engine);
 	}
 	
 	@Test

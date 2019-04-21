@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.metronom.tictactoe2.config.TestParamsBuilder" time="1.743" tests="4" errors="0" skipped="0" failures="0">
+<testsuite name="com.metronom.tictactoe2.config.TestParamsBuilder" time="1.257" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib"/>
@@ -63,8 +63,8 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testReadPlayerOneSymbol" classname="com.metronom.tictactoe2.config.TestParamsBuilder" time="1.739"/>
+  <testcase name="testReadPlayerOneSymbol" classname="com.metronom.tictactoe2.config.TestParamsBuilder" time="1.251"/>
   <testcase name="testReadPlayerTwoSymbol" classname="com.metronom.tictactoe2.config.TestParamsBuilder" time="0.002"/>
-  <testcase name="testReadAIPlayerSymbol" classname="com.metronom.tictactoe2.config.TestParamsBuilder" time="0.001"/>
-  <testcase name="testReadPlayFieldSize" classname="com.metronom.tictactoe2.config.TestParamsBuilder" time="0.001"/>
+  <testcase name="testReadAIPlayerSymbol" classname="com.metronom.tictactoe2.config.TestParamsBuilder" time="0.002"/>
+  <testcase name="testReadPlayFieldSize" classname="com.metronom.tictactoe2.config.TestParamsBuilder" time="0.002"/>
 </testsuite>

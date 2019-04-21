@@ -1,0 +1,7 @@
+com/metronom/tictactoe2/models/TestPlayerBuilder.class
+com/metronom/tictactoe2/models/TestAIPlayer.class
+com/metronom/tictactoe2/config/TestParamsBuilder.class
+com/metronom/tictactoe2/models/TestHumanPlayer.class
+com/metronom/tictactoe2/models/TestCell.class
+com/metronom/tictactoe2/config/TestParams.class
+com/metronom/tictactoe2/models/TestPlayField.class

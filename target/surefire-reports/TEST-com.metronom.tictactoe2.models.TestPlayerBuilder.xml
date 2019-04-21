@@ -63,10 +63,10 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="testBuildHumanPlayer" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0.002"/>
+  <testcase name="testBuildHumanPlayer" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0.001"/>
   <testcase name="testWithName" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0"/>
-  <testcase name="testWithHandler" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0.001"/>
+  <testcase name="testWithHandler" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0"/>
   <testcase name="testBuildAIPlayer" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0"/>
-  <testcase name="testWithSymbol" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0"/>
-  <testcase name="testWithAISupport" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0"/>
+  <testcase name="testWithSymbol" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0.001"/>
+  <testcase name="testWithAISupport" classname="com.metronom.tictactoe2.models.TestPlayerBuilder" time="0.001"/>
 </testsuite>

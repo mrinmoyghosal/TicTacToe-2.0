@@ -1,7 +1,10 @@
 package com.metronom.tictactoe2.exceptions;
 
 public class InvalidCellException extends Exception {
-    public InvalidCellException(String message) {
+	
+	private static final long serialVersionUID = 1L;
+
+	public InvalidCellException(String message) {
         super(message);
     }
 }

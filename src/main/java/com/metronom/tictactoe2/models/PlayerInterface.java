@@ -3,7 +3,7 @@ package com.metronom.tictactoe2.models;
 import java.util.Optional;
 
 public interface PlayerInterface {
-	
+		
 	/**
 	 * Get name of the player
 	 * @return player's name

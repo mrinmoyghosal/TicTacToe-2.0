@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PlayerBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">TicTacToe2</a> &gt; <a href="index.source.html" class="el_package">com.metronom.tictactoe2.models</a> &gt; <span class="el_source">PlayerBuilder.java</span></div><h1>PlayerBuilder.java</h1><pre class="source lang-java linenums">package com.metronom.tictactoe2.models;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
+import com.metronom.tictactoe2.console.ConsoleHandler;
+import com.metronom.tictactoe2.engine.PlayEngine;
 
 public class PlayerBuilder {
     
 	private String name;
     private char symbol;
-<span class="fc" id="L9">    private boolean aiSupport = false;</span>
-    ConsoleHandler handler;
+<span class="fc" id="L10">    private boolean aiSupport = false;</span>
+    private ConsoleHandler handler;
+	private PlayEngine engine;
 
-<span class="fc" id="L12">    public PlayerBuilder() {</span>
-<span class="fc" id="L13">    }</span>
+<span class="fc" id="L14">    public PlayerBuilder() {</span>
+<span class="fc" id="L15">    }</span>
     
     /**
      * Getters
      * @return
      */
     public String getName() {
-<span class="fc" id="L20">		return name;</span>
+<span class="fc" id="L22">		return name;</span>
 	}
 
 	public char getSymbol() {
-<span class="fc" id="L24">		return symbol;</span>
+<span class="fc" id="L26">		return symbol;</span>
 	}
 
 	public boolean isAiSupport() {
-<span class="fc" id="L28">		return aiSupport;</span>
+<span class="fc" id="L30">		return aiSupport;</span>
 	}
 	
 	public ConsoleHandler getHandler() {
-<span class="fc" id="L32">		return handler;</span>
+<span class="fc" id="L34">		return handler;</span>
 	}
 
     /**
@@ -39,8 +41,19 @@ public class PlayerBuilder {
      * @return the same {@link PlayerBuilder}
      */
     public PlayerBuilder withName(final String name) {
-<span class="fc" id="L42">        this.name = name;</span>
-<span class="fc" id="L43">        return this;</span>
+<span class="fc" id="L44">        this.name = name;</span>
+<span class="fc" id="L45">        return this;</span>
+    }
+    
+    /**
+     * Sets the name for the {@link Player} that will be created by calling the {@code build} method.
+     *
+     * @param name name of the player
+     * @return the same {@link PlayerBuilder}
+     */
+    public PlayerBuilder withEngineContext(final PlayEngine engine) {
+<span class="fc" id="L55">        this.engine = engine;</span>
+<span class="fc" id="L56">        return this;</span>
     }
 
     /**
@@ -50,13 +63,13 @@ public class PlayerBuilder {
      * @return the same {@link PlayerBuilder}
      */
     public PlayerBuilder withSymbol(final char symbol) {
-<span class="fc" id="L53">        this.symbol = symbol;</span>
-<span class="fc" id="L54">        return this;</span>
+<span class="fc" id="L66">        this.symbol = symbol;</span>
+<span class="fc" id="L67">        return this;</span>
     }
     
     public PlayerBuilder withConsoleHandler(final ConsoleHandler handler) {
-<span class="fc" id="L58">        this.handler = handler;</span>
-<span class="fc" id="L59">        return this;</span>
+<span class="fc" id="L71">        this.handler = handler;</span>
+<span class="fc" id="L72">        return this;</span>
     }
 
     /**
@@ -65,8 +78,8 @@ public class PlayerBuilder {
      * @return the same {@link PlayerBuilder}
      */
     public PlayerBuilder withAISupport() {
-<span class="fc" id="L68">        this.aiSupport = true;</span>
-<span class="fc" id="L69">        return this;</span>
+<span class="fc" id="L81">        this.aiSupport = true;</span>
+<span class="fc" id="L82">        return this;</span>
     }
 
     /**
@@ -75,11 +88,11 @@ public class PlayerBuilder {
      * @return instance of {@link Player}
      */
     public Player build() {
-<span class="fc bfc" id="L78" title="All 2 branches covered.">    	if(aiSupport) {</span>
-<span class="fc" id="L79">    		return new AIPlayer(name, symbol, aiSupport, handler);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">    	if(aiSupport) {</span>
+<span class="fc" id="L92">    		return new AIPlayer(name, symbol, aiSupport, handler, engine);</span>
     	}
     	
-<span class="fc" id="L82">        return new HumanPlayer(name, symbol, aiSupport, handler);</span>
+<span class="fc" id="L95">        return new HumanPlayer(name, symbol, aiSupport, handler, engine);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

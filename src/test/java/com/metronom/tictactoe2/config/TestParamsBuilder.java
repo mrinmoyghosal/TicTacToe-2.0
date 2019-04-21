@@ -11,8 +11,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
 import com.metronom.tictactoe2.config.PlayerName;
+import com.metronom.tictactoe2.console.ConsoleHandler;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ConsoleHandler.class)

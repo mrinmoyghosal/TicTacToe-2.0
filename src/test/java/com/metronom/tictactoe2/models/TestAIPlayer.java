@@ -6,14 +6,17 @@ import static org.mockito.Mockito.*;
 
 import java.util.Optional;
 
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
+import com.metronom.tictactoe2.console.ConsoleHandler;
+import com.metronom.tictactoe2.engine.PlayEngine;
 
 
 @RunWith(PowerMockRunner.class)
@@ -23,11 +26,13 @@ public class TestAIPlayer {
 	private static AIPlayer player;
 	
 	@Mock
-	private static PlayField field;
+	private PlayField field;
+	@Mock
+	private PlayEngine engine;
 	
-	@BeforeClass
-	public static void initPlayer() {
-		player = new AIPlayer("X", 'Y', true, ConsoleHandler.getInstance());
+	@Before
+	public void initPlayer() {	
+		player = new AIPlayer("X", 'Y', true, ConsoleHandler.getInstance(), engine);
 	}
 	
 	@Test
@@ -43,6 +48,16 @@ public class TestAIPlayer {
 	@Test
 	public void testIsAiSupport() {
 		assertEquals(true, player.isAiSupport());
+	}
+	
+	@Test
+	public void testGetNextMoveFindsPosition() {
+		PowerMockito.mockStatic(PlayField.class);	
+		when(PlayField.getInstance()).thenReturn(field);
+		when(field.getPlayFieldLength()).thenReturn(3);
+		when(field.getCell(0, 0)).thenReturn(Optional.empty());
+		Optional<Cell> cell = player.getNextMove(field);
+		assertTrue(cell.isPresent());
 	}
 	
 }

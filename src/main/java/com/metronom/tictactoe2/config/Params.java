@@ -1,8 +1,5 @@
 package com.metronom.tictactoe2.config;
 
-import java.util.Properties;
-
-
 public class Params {
 	
 	private int playFieldSize;
@@ -34,8 +31,4 @@ public class Params {
 		return this.aiPlayerSymbol;
 	}
 	
-	
-	
-	
-
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.metronom.tictactoe2.models.TestAIPlayer" time="0.377" tests="1" errors="1" skipped="0" failures="0">
+<testsuite name="com.metronom.tictactoe2.models.TestAIPlayer" time="1.057" tests="4" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib"/>
@@ -63,19 +63,8 @@
     <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase name="com.metronom.tictactoe2.models.TestAIPlayer" classname="com.metronom.tictactoe2.models.TestAIPlayer" time="0.377">
-    <error message="&#10;when() requires an argument which has to be &apos;a method call on a mock&apos;.&#10;For example:&#10;    when(mock.getArticles()).thenReturn(articles);&#10;&#10;Also, this error might show up because:&#10;1. you stub either of: final/private/equals()/hashCode() methods.&#10;   Those methods *cannot* be stubbed/verified.&#10;   Mocking methods declared on non-public parent classes is not supported.&#10;2. inside when() you don&apos;t call method on mock but on some other object.&#10;" type="org.mockito.exceptions.misusing.MissingMethodInvocationException">org.mockito.exceptions.misusing.MissingMethodInvocationException: 
-when() requires an argument which has to be 'a method call on a mock'.
-For example:
-    when(mock.getArticles()).thenReturn(articles);
-
-Also, this error might show up because:
-1. you stub either of: final/private/equals()/hashCode() methods.
-   Those methods *cannot* be stubbed/verified.
-   Mocking methods declared on non-public parent classes is not supported.
-2. inside when() you don't call method on mock but on some other object.
-
-	at com.metronom.tictactoe2.models.TestAIPlayer.initPlayer(TestAIPlayer.java:30)
-</error>
-  </testcase>
+  <testcase name="testGetNextMoveFindsPosition" classname="com.metronom.tictactoe2.models.TestAIPlayer" time="1.054"/>
+  <testcase name="testGetName" classname="com.metronom.tictactoe2.models.TestAIPlayer" time="0.001"/>
+  <testcase name="testGetSymbol" classname="com.metronom.tictactoe2.models.TestAIPlayer" time="0.001"/>
+  <testcase name="testIsAiSupport" classname="com.metronom.tictactoe2.models.TestAIPlayer" time="0.001"/>
 </testsuite>

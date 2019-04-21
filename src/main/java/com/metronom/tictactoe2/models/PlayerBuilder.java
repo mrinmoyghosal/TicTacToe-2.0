@@ -1,13 +1,15 @@
 package com.metronom.tictactoe2.models;
 
-import com.metronom.tictactoe2.ui.ConsoleHandler;
+import com.metronom.tictactoe2.console.ConsoleHandler;
+import com.metronom.tictactoe2.engine.PlayEngine;
 
 public class PlayerBuilder {
     
 	private String name;
     private char symbol;
     private boolean aiSupport = false;
-    ConsoleHandler handler;
+    private ConsoleHandler handler;
+	private PlayEngine engine;
 
     public PlayerBuilder() {
     }
@@ -40,6 +42,17 @@ public class PlayerBuilder {
      */
     public PlayerBuilder withName(final String name) {
         this.name = name;
+        return this;
+    }
+    
+    /**
+     * Sets the name for the {@link Player} that will be created by calling the {@code build} method.
+     *
+     * @param name name of the player
+     * @return the same {@link PlayerBuilder}
+     */
+    public PlayerBuilder withEngineContext(final PlayEngine engine) {
+        this.engine = engine;
         return this;
     }
 
@@ -76,9 +89,9 @@ public class PlayerBuilder {
      */
     public Player build() {
     	if(aiSupport) {
-    		return new AIPlayer(name, symbol, aiSupport, handler);
+    		return new AIPlayer(name, symbol, aiSupport, handler, engine);
     	}
     	
-        return new HumanPlayer(name, symbol, aiSupport, handler);
+        return new HumanPlayer(name, symbol, aiSupport, handler, engine);
     }
 }

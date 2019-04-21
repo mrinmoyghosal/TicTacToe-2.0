@@ -1,4 +1,4 @@
-package com.metronom.tictactoe2.ui;
+package com.metronom.tictactoe2.console;
 
 public enum ConsoleMessage {
 	
