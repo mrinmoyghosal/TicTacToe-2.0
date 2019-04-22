@@ -180,6 +180,7 @@ public class TestPlayEngine {
     @Test
     public void testGetPlayers() {
         Player[] players = engine.getPlayers();
+        assertEquals(3, players.length);
         
     }
 

@@ -2,18 +2,16 @@ package com.metronom.tictactoe2.config;
 
 import com.metronom.tictactoe2.console.ConsoleHandler;
 
-enum PlayerName{
-	PLAYER_1("Player 1"),
-	PLAYER_2("Player 2"),
-	AIPlayer("AI Player");
-	
+enum PlayerName {
+	PLAYER_1("Player 1"), PLAYER_2("Player 2"), AIPlayer("AI Player");
+
 	public String name;
-	
-	PlayerName(String name){
+
+	PlayerName(String name) {
 		this.name = name;
 	}
-	
-	String getName(){
+
+	String getName() {
 		return this.name;
 	}
 }
@@ -26,8 +24,6 @@ public class ParamsBuilder {
 	private char playerTwoSymbol;
 	private char aiPlayerSymbol;
 	
-	
-
 	/*
 	 * Initialize ParamsBuilder
 	 */
