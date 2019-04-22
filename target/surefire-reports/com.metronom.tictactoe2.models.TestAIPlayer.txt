@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.metronom.tictactoe2.models.TestAIPlayer
--------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.265 sec - in com.metronom.tictactoe2.models.TestAIPlayer
