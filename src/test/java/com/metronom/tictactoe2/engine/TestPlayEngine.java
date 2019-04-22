@@ -19,6 +19,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import java.io.StringReader;
 import java.util.Optional;
 
+@PrepareForTest({Params.class})
 public class TestPlayEngine {
     
 	private PlayEngine engine;
