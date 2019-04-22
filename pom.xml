@@ -116,7 +116,7 @@
 	<configuration>
 	  <archive>
 	    <manifest>
-		<mainClass>com.metronom.tictactoe2.TicTacToe2</mainClass>
+		<mainClass>com.codingtest.tictactoe2.TicTacToe2</mainClass>
 	    </manifest>
 	  </archive>
 	</configuration>
