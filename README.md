@@ -9,7 +9,7 @@ Tic-Tac-Toe2 Implementation for 3 players with customizable board size (3 -10)
 * Maven
 
 ### Clone the repository
-` git clone https://github.com/mrinmoyghosal/tictactoe2.git`
+` git clone https://github.com/mrinmoyghosal/TicTacToe-2.0.git`
 
 ### Run tests and generate coverage reports
 * `cd tictactoe2`
