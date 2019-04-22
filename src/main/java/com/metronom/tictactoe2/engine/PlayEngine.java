@@ -104,6 +104,10 @@ public class PlayEngine {
 	public Optional<Player> getWinner() {
 		return Optional.ofNullable(winner);
 	}
+	
+	public void setPlayers(Player[] players) {
+		this.players = players;
+	}
 
 	/**
 	 * This is the method that controls the game.<br/>

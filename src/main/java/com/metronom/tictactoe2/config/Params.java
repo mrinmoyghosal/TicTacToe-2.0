@@ -7,7 +7,7 @@ public class Params {
 	private char playerTwoSymbol;
 	private char aiPlayerSymbol;
 	
-	Params(int playFieldSize, char playerOneSymbol, char playerTwoSymbol, char aiPlayerSymbol) {
+	public Params(int playFieldSize, char playerOneSymbol, char playerTwoSymbol, char aiPlayerSymbol) {
 		this.playFieldSize = playFieldSize;
 		this.playerOneSymbol = playerOneSymbol;
 		this.playerTwoSymbol = playerTwoSymbol;

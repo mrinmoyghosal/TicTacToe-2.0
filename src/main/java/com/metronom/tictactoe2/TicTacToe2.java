@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 public class TicTacToe2 {
 	private static Logger logger = Logger.getLogger(TicTacToe2.class.getName());
+	
+	public static boolean isRunning = false;
 
 	public TicTacToe2() {
 
@@ -30,12 +32,14 @@ public class TicTacToe2 {
 
 			handler.initialize(new InputStreamReader(System.in), System.out, System.err);
 
-			Params config = paramsBuilder.withConsoleHandler(handler).readPlayFieldSize().readPlayerOneSymbol()
-					.readPlayerTwoSymbol().readAIPlayerSymbol().build();
+			Params config = paramsBuilder.withConsoleHandler(handler).readPlayFieldSize().readAIPlayerSymbol().readPlayerOneSymbol()
+					.readPlayerTwoSymbol().build();
 
 			PlayEngine playEngine = new PlayEngine(config);
 			handler.setPlayEngine(playEngine);
+			isRunning = true;
 			handler.startGame();
+			isRunning = false;
 
 		} catch (Exception ex) {
 			logger.log(Level.SEVERE, "Fatal error", ex);

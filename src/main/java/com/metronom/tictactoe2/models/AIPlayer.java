@@ -146,7 +146,7 @@ public class AIPlayer extends Player {
 	public Optional<Cell> getNextMove(final PlayField field) {
 
 		// Get Player with Highest Score
-
+		
 		List<int[]> moves = new ArrayList<int[]>();
 		Random rand = new Random();
 
@@ -168,4 +168,5 @@ public class AIPlayer extends Player {
 		return Optional.ofNullable(new Cell(randomElement[0], randomElement[1]));
 
 	}
+	 
 }

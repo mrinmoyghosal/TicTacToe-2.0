@@ -193,7 +193,6 @@ public class ConsoleHandler {
 	 */
 	private Cell readPlayerMoves(Player player) {
 		Cell cell = null;
-		String response;
 
 		while (cell == null) {
 			showMessage(String.format(ConsoleMessage.ENTER_NEXT_POINT.getMessageText(), player.getName(),
@@ -205,22 +204,24 @@ public class ConsoleHandler {
 				location = scanner.nextLine();
 
 			try {
-				int x = Character.getNumericValue(location.charAt(0));
-				char sep = location.charAt(1);
-				int y = Character.getNumericValue(location.charAt(2));
+				if(location.contains(",")) {
+				String[] parts = location.split(",");
+				int x = Integer.parseInt(parts[0].trim());
+				int y = Integer.parseInt(parts[1].trim());
 
 				boolean isValidX = x >= 1 && x <= maxPlayFieldSize ? true : false;
 				boolean isValidY = y >= 1 && y <= maxPlayFieldSize ? true : false;
-				boolean isValidSep = sep == ',' ? true : false;
 
-				if (isValidX && isValidY && isValidSep) {
-
+				if (isValidX && isValidY) {
 					int row = x - 1;
 					int column = y - 1;
 					cell = new Cell(row, column);
 				} else {
 					showMessage(String.format(ConsoleMessage.WRONG_VALUE.getMessageText(), location));
 				}
+			}else {
+				showMessage(String.format(ConsoleMessage.WRONG_VALUE.getMessageText(), location));
+			}
 
 			} catch (StringIndexOutOfBoundsException e) {
 				showMessage(String.format(ConsoleMessage.WRONG_VALUE.getMessageText(), location));
